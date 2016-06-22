@@ -2,6 +2,8 @@
 #define BUSCADOR_H
 
 #include <QMainWindow>
+#include <QSqlDatabase>
+#include <QtSql>
 
 namespace Ui {
 class Buscador;
@@ -12,6 +14,8 @@ class Buscador : public QMainWindow
         Q_OBJECT
 
     public:
+        void conectar();
+        QSqlDatabase db;
         explicit Buscador(QWidget *parent = 0);
         ~Buscador();
 
