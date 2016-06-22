@@ -13,8 +13,12 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        buscador.cpp
+        buscador.cpp \
+    operaciones.cpp
 
-HEADERS  += buscador.h
+HEADERS  += buscador.h \
+    operaciones.h
 
 FORMS    += buscador.ui
+
+CONFIG += c++11

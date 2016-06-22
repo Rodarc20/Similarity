@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QSqlDatabase>
 #include <QtSql>
+#include "operaciones.h"
 
 namespace Ui {
 class Buscador;
