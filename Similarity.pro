@@ -23,4 +23,4 @@ HEADERS  += buscador.h \
 
 FORMS    += buscador.ui
 
-CONFIG += c++11
+CONFIG += c++11 thread

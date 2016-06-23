@@ -51,4 +51,4 @@ void ResultModel::setSimilaridad(vector<long long> &v)
 }
 
 
-/*quiza deba agergar un par de metodos para setear los vectores, o que el constructor los reciba, tambien, cosa que esto solo se encarga de mostrarlos
+/*quiza deba agergar un par de metodos para setear los vectores, o que el constructor los reciba, tambien, cosa que esto solo se encarga de mostrarlos*/
