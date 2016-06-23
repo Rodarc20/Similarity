@@ -14,7 +14,7 @@
    <string>Buscador</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pushButtonSearch">
     <property name="geometry">
      <rect>
       <x>570</x>
@@ -27,7 +27,7 @@
      <string>Search</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="lineEditWord">
     <property name="geometry">
      <rect>
       <x>340</x>
@@ -50,7 +50,7 @@
      <string>Word:</string>
     </property>
    </widget>
-   <widget class="QTableView" name="tableView">
+   <widget class="QTableView" name="tableViewResults">
     <property name="geometry">
      <rect>
       <x>180</x>

@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         buscador.cpp \
-    operaciones.cpp
+    operaciones.cpp \
+    resultmodel.cpp
 
 HEADERS  += buscador.h \
-    operaciones.h
+    operaciones.h \
+    resultmodel.h
 
 FORMS    += buscador.ui
 

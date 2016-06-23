@@ -23,3 +23,8 @@ Buscador::~Buscador()
 {
     delete ui;
 }
+
+void Buscador::on_pushButtonSearch_clicked()
+{
+    QString word = ui->lineEditWord->text();
+}

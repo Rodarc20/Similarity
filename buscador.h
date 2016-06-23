@@ -16,9 +16,15 @@ class Buscador : public QMainWindow
 
     public:
         void conectar();
+        void loadInfo();//por ahora solo recuperare la informacion de unas cuantas palabras
         QSqlDatabase db;
         explicit Buscador(QWidget *parent = 0);
         ~Buscador();
+
+    private slots:
+        void on_pushButton_clicked();
+
+        void on_pushButtonSearch_clicked();
 
     private:
         Ui::Buscador *ui;
