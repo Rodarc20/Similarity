@@ -47,7 +47,8 @@ void Buscador::process(QString palabra)
     //quiza tambien deberia usar mi propia estructura para almacenar todos los datos pertinentes y amnejarlo en el modelo a base de if como hago ahora, solo que ya todo estaria en unn solo vector
     vector<QString> palabras (10);//ya no debo repuperar nada mas que sus vectores
     palabras[0] = "god";
-    palabras[1] = "allah";
+    //palabras[1] = "allah";
+    palabras[1] = "yahweh";
     palabras[2] = "buddha";
     palabras[3] = "lion";
     palabras[4] = "tiger";

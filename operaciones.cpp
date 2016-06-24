@@ -24,9 +24,9 @@ long long int modulo (vector<pair<long long int, long long int> > & v){//estos v
 long long int productoPunto(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b){//aqui es donde aplicare la busqueda binaria, o en todo caso el avace linial sobre los dos vectores a ver cual es mas rapido
     long long int acum = 0;//hace la busqueda binaria sobre el as grandi, y avanzar linealmente por el mas pequeño
     long int j = 0; //j debe ser menor que b
-    for(long int i = 0; i < a.size() and j < b.size(); i = -~i){//asumire que a es el mas grande
+    for(long int i = 0; i < a.size() && j < b.size(); i = -~i){//asumire que a es el mas grande
         j = binarySearch(b, j, b.size()-1, a[i].first);
-        if(j < b.size() and b[j].first == a[i].first){
+        if(j < b.size() && b[j].first == a[i].first){
             acum += a[i].second * b[j].second;
             j = -~j; //incremento j, puesto que ya use este valor por lo tanto no es necesario incluirlo en la busqueda binaria, tener cuidao si la busqueda bianri me da mas que b.size()
         }
@@ -37,11 +37,11 @@ long long int productoPunto(vector<pair<long long int, long long int> > & a, vec
 long long int productoPuntoLineal(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b){//aqui es donde aplicare la busqueda binaria, o en todo caso el avace linial sobre los dos vectores a ver cual es mas rapido
     long long int acum = 0;//hace la busqueda binaria sobre el as grandi, y avanzar linealmente por el mas pequeño
     long int j = 0; //j debe ser menor que b
-    for(long int i = 0; i < a.size() and j < b.size(); i = -~i){//asumire que a es el mas grande
-        while(j < b.size() and b[j].first != a[i].first){
+    for(long int i = 0; i < a.size() && j < b.size(); i = -~i){//asumire que a es el mas grande
+        while(j < b.size() && b[j].first < a[i].first){//no diferente sino que sea menor
             j = -~j;
         }
-        if(j < b.size()){//si j es menor que size eso quiere decir que el bucle anterior paro por que encontro una igualdad por lo tanto procedo a acumular
+        if(j < b.size() && a[i].first == b[j].first){//si j es menor que size eso quiere decir que el bucle anterior paro por que encontro una igualdad por lo tanto procedo a acumular
             acum += a[i].second * b[j].second;
             j = -~j; //incremento j, puesto que ya use este valor por lo tanto no es necesario incluirlo en la busqueda binaria, tener cuidao si la busqueda bianri me da mas que b.size()
         }
@@ -55,10 +55,10 @@ double simcos(vector<pair<long long int, long long int> > & a, vector<pair<long 
         resI = productoPunto(a, b);
     else
         resI = productoPunto(b, a);
-    cout << "resI: " << resI << endl;
+    //cout << "resI: " << resI << endl;
     double mods = sqrt(modulo(a))*sqrt(modulo(b));
     double res = (double)resI / mods; //quiza los modulos deberian estar precalculados, al  menos el del vector con el que estoy comparando no lo deberia calcular siempre
-    cout << "mod: " << mods << endl;
+    //cout << "mod: " << mods << endl;
     return res; // y hacer el return defrente
 }
 
