@@ -22,8 +22,8 @@ QVariant ResultModel::data(const QModelIndex &index, int role) const
         int col = index.column();
         int row = index.row();
         if(col == 0){
-            return QVariant(ids[row]);
-            //return QVariant(qlonglong (ids[row]));
+            //return QVariant(ids[row]);
+            return QVariant(qlonglong (ids[row]));
         }
         if(col == 1){
             return words[row];
@@ -40,12 +40,12 @@ void ResultModel::setWords(vector<QString> &v)
     words = v;
 }
 
-void ResultModel::setIds(vector<long long> &v)
+void ResultModel::setIds(vector<long int> &v)
 {
     ids = v;
 }
 
-void ResultModel::setSimilaridad(vector<long long> &v)
+void ResultModel::setSimilaridad(vector<double> &v)
 {
     similaridad = v;
 }
