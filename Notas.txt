@@ -1,0 +1,4 @@
+Deberia construi una funcion que una query la convierta a un vector de pairs
+
+decbo tener una clase vector<vector<>> que almancene los vectores de las palabras, deberia fijar un tamaño antes en lugar de estar haciendo push_back(), asi mismo estos vectores tendran diferentes tamaños
+ver si eso es eficiente
