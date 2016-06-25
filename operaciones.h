@@ -18,6 +18,7 @@ long long int productoPunto(vector<pair<long long int, long long int> > & a, vec
 long long int productoPuntoLineal(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b);//aqui es donde aplicare la busqueda binaria, o en todo caso el avace linial sobre los dos vectores a ver cual es mas rapido
 
 double simcos(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b);
+double simcos2(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b);
 
 /*Parece que solo tendre qu usar un pair, ua que lo recupero de la base de datos, si bien son tripletas, pero tengo que separar por palabra 1, y construir un vector, con los otros dos, serias estupido conser var tripletas
 en la cual un valor sea igual en todas,

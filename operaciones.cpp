@@ -55,10 +55,29 @@ double simcos(vector<pair<long long int, long long int> > & a, vector<pair<long 
         resI = productoPunto(a, b);
     else
         resI = productoPunto(b, a);
-    //cout << "resI: " << resI << endl;
     double mods = sqrt(modulo(a))*sqrt(modulo(b));
     double res = (double)resI / mods; //quiza los modulos deberian estar precalculados, al  menos el del vector con el que estoy comparando no lo deberia calcular siempre
-    //cout << "mod: " << mods << endl;
     return res; // y hacer el return defrente
 }
 
+double simcos2(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b){
+    double res;
+    long long int acumPP = 0;
+    long long int acumMA = 0;
+    long long int acumMB = 0;
+    long int j = 0; //j debe ser menor que b
+    for(long int i = 0; i < a.size() && j < b.size(); i = -~i){//asumire que a es el mas grande
+        while(j < b.size() && b[j].first < a[i].first){//no diferente sino que sea menor
+            acumMB += b[j].second * b[j].second;
+            j = -~j;
+        }
+        if(j < b.size() && a[i].first == b[j].first){//si j es menor que size eso quiere decir que el bucle anterior paro por que encontro una igualdad por lo tanto procedo a acumular
+            acumPP += a[i].second * b[j].second;
+            acumMB += b[j].second * b[j].second;
+            j = -~j; //incremento j, puesto que ya use este valor por lo tanto no es necesario incluirlo en la busqueda binaria, tener cuidao si la busqueda bianri me da mas que b.size()
+        }
+        acumMA += a[i].second * a[i].second;
+    }
+    res = (double)acumPP / (sqrt(acumMA)*sqrt(acumMB));
+    return res;
+}

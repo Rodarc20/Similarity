@@ -47,8 +47,8 @@ void Buscador::process(QString palabra)
     //quiza tambien deberia usar mi propia estructura para almacenar todos los datos pertinentes y amnejarlo en el modelo a base de if como hago ahora, solo que ya todo estaria en unn solo vector
     vector<QString> palabras (10);//ya no debo repuperar nada mas que sus vectores
     palabras[0] = "god";
-    //palabras[1] = "allah";
-    palabras[1] = "yahweh";
+    palabras[1] = "allah";
+    //palabras[1] = "yahweh";
     palabras[2] = "buddha";
     palabras[3] = "lion";
     palabras[4] = "tiger";
@@ -67,9 +67,9 @@ void Buscador::process(QString palabra)
         vectores[i] = recuperarVector(palabras[i]);
         ids[i] = i;
     }
-    qDebug() << "repuracion de vectores completada";
+    qDebug() << "recuperacion de vectores completada";
     for(int i = 0; i < palabras.size(); i++){
-        similaridad[i] = simcos(vectores[pal], vectores[i]);
+        similaridad[i] = simcos2(vectores[pal], vectores[i]);
         qDebug() << similaridad[i];
     }
     model = new ResultModel(this);
@@ -97,7 +97,7 @@ Buscador::~Buscador()
 void Buscador::on_pushButtonSearch_clicked()
 {
     QString word = ui->lineEditWord->text();
-    process(word);
+    process(word);//debo asegurarme que la palabra exista antes de mandar a procesar todo o fallara esta cosa
 }
 
 void Buscador::on_pushButton_clicked()
