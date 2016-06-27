@@ -83,7 +83,38 @@ vector<pair<long long int, long long int> > Buscador::recuperarVectorById(long l
     }
     return v;
 }
-void Buscador::process2(QString palabra){
+/*double simcos2(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b){
+    double res;
+    long long int acumPP = 0;
+    long long int acumMA = 0;
+    long long int acumMB = 0;
+    long int j = 0; //j debe ser menor que b
+    for(long int i = 0; i < a.size() && j < b.size(); i = -~i){//asumire que a es el mas grande
+        while(j < b.size() && b[j].first < a[i].first){//no diferente sino que sea menor
+            acumMB += b[j].second * b[j].second;
+            j = -~j;
+        }
+        if(j < b.size() && a[i].first == b[j].first){//si j es menor que size eso quiere decir que el bucle anterior paro por que encontro una igualdad por lo tanto procedo a acumular
+            acumPP += a[i].second * b[j].second;
+            acumMB += b[j].second * b[j].second;
+            j = -~j; //incremento j, puesto que ya use este valor por lo tanto no es necesario incluirlo en la busqueda binaria, tener cuidao si la busqueda bianri me da mas que b.size()
+        }
+        acumMA += a[i].second * a[i].second;
+    }
+    //si a termina primero, hay jotas por recorrer
+    while(j < b.size()){//no diferente sino que sea menor
+        acumMB += b[j].second * b[j].second;
+        j = -~j;
+    }
+    res = (double)acumPP / (sqrt(acumMA)*sqrt(acumMB));
+    return res;
+}*/
+void Buscador::process3(QString palabra){
+    vector<pair<long long int, long long int> > vPalabra = recuperarVectorByPalabra(palabra);
+    if(!vPalabra.size()){//si la palabra no esta, no debo procesarla
+        return;
+    }
+    qDebug() << vPalabra.size();
     QSqlQuery query2 (db);
     QString consulta2 = "select * from palabra_izq order by id_palabra_izq;";//quiza solod deba retornal palabra
     query2.prepare(consulta2);
@@ -97,7 +128,66 @@ void Buscador::process2(QString palabra){
     bool info = query.first();
     QSqlRecord rec = query.record();
     qDebug() << "recuperacion grande completa " << info;
+    vector<Palabra> palabras (88342);//93243 palabras en total me quedaron, tener cuidado con esto si hago modificaciones, los id de la base de datos son el id del vector +1
+    //deberia trabajar con alotra tabla por que no todas la palabras tendra, vector seria estupido buscarlo, //88342
+    for(long int i = 0; i < palabras.size(); i++){
+        double res;
+        long long int acumPP = 0;
+        long long int acumMA = 0;
+        long long int acumMB = 0;
+        long int j = 0;
+        while(info && rec.field(0).value().toLongLong()==i+1 ){/*lo anterior es el i<a.size() // && rec.field(0).value().toLongLong() < vPalabra[i].first){*/
+            while(j < vPalabra.size() && vPalabra[j].first < rec.field(1).value().toLongLong()){//no diferente sino que sea menor
+                acumMB += vPalabra[j].second * vPalabra[j].second;
+                j = -~j;
+            }
+            if(j < vPalabra.size() && rec.field(1).value().toLongLong() == vPalabra[j].first){//si j es menor que size eso quiere decir que el bucle anterior paro por que encontro una igualdad por lo tanto procedo a acumular
+                acumPP += rec.field(2).value().toLongLong() * vPalabra[j].second;
+                acumMB += vPalabra[j].second * vPalabra[j].second;
+                j = -~j; //incremento j, puesto que ya use este valor por lo tanto no es necesario incluirlo en la busqueda binaria, tener cuidao si la busqueda bianri me da mas que b.size()
+            }
+            acumMA += rec.field(2).value().toLongLong() * rec.field(2).value().toLongLong();
+            info = query.next(); //i++
+            rec = query.record();
+        }
+        while(j < vPalabra.size()){//no diferente sino que sea menor
+            acumMB += vPalabra[j].second * vPalabra[j].second;
+            j = -~j;
+        }
+        res = (double)acumPP / (sqrt(acumMA)*sqrt(acumMB));
+        palabras[i].similaridad = res;
+        palabras[i].indice = i+1;
+        rec2 = query2.record();
+        palabras[i].palabra = rec2.field(1).value().toString();
+        //palabras[i].palabra = recuperarPalabraById(i+1);//no necesito hacer esto, como estoy usado las palabras de la tabal plabra 1 y alli ya estan ordenads solo debo recuperar eso y accedor con igualda a la posicion i
+        //qDebug() << palabras[i].palabra;
+        query2.next();
+    }
+    model = new ResultModel(this);
+    model->setPalabras(palabras);
+    ui->tableViewResults->setModel(model);
+    ui->tableViewResults->resizeColumnsToContents();
+    qDebug() << "Fin";
+}
+void Buscador::process2(QString palabra){
     vector<pair<long long int, long long int> > vPalabra = recuperarVectorByPalabra(palabra);
+    if(!vPalabra.size()){//si la palabra no esta, no debo procesarla
+        return;
+    }
+    qDebug() << vPalabra.size();
+    QSqlQuery query2 (db);
+    QString consulta2 = "select * from palabra_izq order by id_palabra_izq;";//quiza solod deba retornal palabra
+    query2.prepare(consulta2);
+    query2.exec();
+    qDebug() << query2.first();
+    QSqlRecord rec2;// = query2.record();
+    QSqlQuery query (db);
+    QString consulta = "select * from relacion_izq_der order by id_palabra_izq, id_palabra_der;";
+    query.prepare(consulta);
+    query.exec();
+    bool info = query.first();
+    QSqlRecord rec = query.record();
+    qDebug() << "recuperacion grande completa " << info;
     vector<Palabra> palabras (88342);//93243 palabras en total me quedaron, tener cuidado con esto si hago modificaciones, los id de la base de datos son el id del vector +1
     //deberia trabajar con alotra tabla por que no todas la palabras tendra, vector seria estupido buscarlo, //88342
     for(long int i = 0; i < palabras.size(); i++){
@@ -117,7 +207,7 @@ void Buscador::process2(QString palabra){
         palabras[i].palabra = rec2.field(1).value().toString();
         //palabras[i].palabra = recuperarPalabraById(i+1);//no necesito hacer esto, como estoy usado las palabras de la tabal plabra 1 y alli ya estan ordenads solo debo recuperar eso y accedor con igualda a la posicion i
         //qDebug() << palabras[i].palabra;
-        palabras[i].similaridad = simcos(vPalabra, vec);//parece que funcion mas rapido con simcos2, pero los resultados no son los mismos, investigar
+        palabras[i].similaridad = simcos2(vPalabra, vec);//parece que funcion mas rapido con simcos2, pero los resultados no son los mismos, investigar
         query2.next();
     }
     model = new ResultModel(this);
@@ -144,6 +234,10 @@ void Buscador::process(QString palabra)
     palabras[9] = "notebook";*/
     //recuperar la palabra que busco y procesarla contra todas las palabras
     vector<pair<long long int, long long int> > vPalabra = recuperarVectorByPalabra(palabra);
+    if(!vPalabra.size()){//si la palabra no esta, no debo procesarla
+        return;
+    }
+    qDebug() << vPalabra.size();
     vector<Palabra> pa (88342);//93243 palabras en total me quedaron, tener cuidado con esto si hago modificaciones, los id de la base de datos son el id del vector +1
     //deberia trabajar con alotra tabla por que no todas la palabras tendra, vector seria estupido buscarlo, //88342
     for(long int i = 0; i < pa.size(); i++){
@@ -211,7 +305,7 @@ Buscador::~Buscador()
 void Buscador::on_pushButtonSearch_clicked()
 {
     QString word = ui->lineEditWord->text();
-    process2(word);//debo asegurarme que la palabra exista antes de mandar a procesar todo o fallara esta cosa
+    process3(word);//debo asegurarme que la palabra exista antes de mandar a procesar todo o fallara esta cosa
 }
 
 void Buscador::on_pushButton_clicked()

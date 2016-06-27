@@ -37,7 +37,7 @@ long long int productoPunto(vector<pair<long long int, long long int> > & a, vec
 long long int productoPuntoLineal(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b){//aqui es donde aplicare la busqueda binaria, o en todo caso el avace linial sobre los dos vectores a ver cual es mas rapido
     long long int acum = 0;//hace la busqueda binaria sobre el as grandi, y avanzar linealmente por el mas pequeño
     long int j = 0; //j debe ser menor que b
-    for(long int i = 0; i < a.size() && j < b.size(); i = -~i){//asumire que a es el mas grande
+    for(long int i = 0; i < a.size() && j < b.size(); i = -~i){//asumire que a es el mas grande/ j < b.size() esta bien en estas funciones por que si ya llegue al final, no tienes sentido seuir iterando por a
         while(j < b.size() && b[j].first < a[i].first){//no diferente sino que sea menor
             j = -~j;
         }
@@ -61,12 +61,11 @@ double simcos(vector<pair<long long int, long long int> > & a, vector<pair<long 
 }
 
 double simcos2(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b){
-    double res;
     long long int acumPP = 0;
     long long int acumMA = 0;
     long long int acumMB = 0;
     long int j = 0; //j debe ser menor que b
-    for(long int i = 0; i < a.size() && j < b.size(); i = -~i){//asumire que a es el mas grande
+    for(long int i = 0; i < a.size() /*&& j < b.size()*/; i = -~i){//asumire que a es el mas grande
         while(j < b.size() && b[j].first < a[i].first){//no diferente sino que sea menor
             acumMB += b[j].second * b[j].second;
             j = -~j;
@@ -78,7 +77,12 @@ double simcos2(vector<pair<long long int, long long int> > & a, vector<pair<long
         }
         acumMA += a[i].second * a[i].second;
     }
-    res = (double)acumPP / (sqrt(acumMA)*sqrt(acumMB));
+    //si a termina primero, hay jotas por recorrer
+    while(j < b.size()){//no diferente sino que sea menor
+        acumMB += b[j].second * b[j].second;
+        j = -~j;
+    }
+    double res = (double)acumPP / (sqrt(acumMA)*sqrt(acumMB));
     return res;
 }
 
