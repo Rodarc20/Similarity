@@ -7,7 +7,7 @@ ResultModel::ResultModel(QObject *parent)
 
 int ResultModel::rowCount(const QModelIndex &parent) const
 {
-    return words.size();
+    return palabras.size();
 }
 
 int ResultModel::columnCount(const QModelIndex &parent) const
@@ -16,7 +16,7 @@ int ResultModel::columnCount(const QModelIndex &parent) const
 
 }
 
-QVariant ResultModel::data(const QModelIndex &index, int role) const
+/*QVariant ResultModel::data(const QModelIndex &index, int role) const
 {
     if(role == Qt::DisplayRole){
         int col = index.column();
@@ -33,7 +33,25 @@ QVariant ResultModel::data(const QModelIndex &index, int role) const
         }
     }
     return QVariant();
+}*/
+QVariant ResultModel::data(const QModelIndex &index, int role) const{
+    if(role == Qt::DisplayRole){//esto es para cuando use la clase palabras
+        int col = index.column();
+        int row = index.row();
+        if(col == 0){
+            //return QVariant(ids[row]);
+            return QVariant(qlonglong (palabras[row].indice));
+        }
+        if(col == 1){
+            return palabras[row].palabra;
+        }
+        if(col == 2){
+            return QVariant(palabras[row].similaridad);
+        }
+    }
+    return QVariant();
 }
+
 
 void ResultModel::setWords(vector<QString> &v)
 {
@@ -48,6 +66,12 @@ void ResultModel::setIds(vector<long int> &v)
 void ResultModel::setSimilaridad(vector<double> &v)
 {
     similaridad = v;
+}
+
+void ResultModel::setPalabras(vector<Palabra> &p)
+{
+    palabras = p;
+    std::sort(palabras.begin(), palabras.end(), mayorSimilaridad);
 }
 
 

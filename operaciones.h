@@ -6,6 +6,7 @@
 #include<tuple>
 #include<utility>
 #include<math.h>
+#include"palabra.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ long long int productoPuntoLineal(vector<pair<long long int, long long int> > & 
 double simcos(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b);
 double simcos2(vector<pair<long long int, long long int> > & a, vector<pair<long long int, long long int> > & b);
 
+bool mayorSimilaridad(Palabra a, Palabra b);
 /*Parece que solo tendre qu usar un pair, ua que lo recupero de la base de datos, si bien son tripletas, pero tengo que separar por palabra 1, y construir un vector, con los otros dos, serias estupido conser var tripletas
 en la cual un valor sea igual en todas,
 los pair<indicePalabra2, frecuencia>

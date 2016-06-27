@@ -17,23 +17,44 @@ void Buscador::conectar()
         QMessageBox::information(this, "Conection", "Error al conectar");
     }
 }
-
-vector<pair<long long int, long long int> > Buscador::recuperarVector(QString palabra){//por haor recibe un id en forma de string o quiza pueda buscar el id si este strign ses unna palabra
-    QString consulta = "select * from palabras where palabra = '" + palabra + "';";//seria bueno hacer este filtrado antes, y soolo recuperar el vector;
-    qDebug() << consulta;
+//quiza la final sea conveniente, yo recuperar todas la s palabras de la palabras y buscar en sete vector, lo que yo ncesito, usando busqueda bianria, esot para el momento final en la que ya he procesdo los vectores, pero no se a que palabra le pertenecen
+//tal vez  no sea necesaria esta funcion siguiente
+//hay en totoal 93243 palabras
+QString Buscador::recuperarPalabraById(long long int indice){//antes de entra a la funcion el indice debe haber sido convertido a string
+    //QString consulta = "select palabra from palabras where id_palabra = " + indice + "';";
+    QString id = QString::number(indice);
+    QString consulta = "select palabra from palabra_izq where id_palabra_izq = " + id + ";";//para la forma 1
     QSqlQuery query(db);
     query.prepare(consulta);
     query.exec();
     query.first();
     QSqlRecord rec = query.record();
-    QString id = rec.field(0).value().toString();
-    qDebug() << "id: " << id;
-    consulta = "select id_palabra_der, frecuencia from relacion_palabra where id_palabra_izq=" + id + " order by id_palabra_der;";//no necesito retornar id_palabra_izq
+    return rec.field(0).value().toString();
+}
+
+QString Buscador::recuperarIdByPalabra(QString palabra){
+    //QString consulta = "select id_palabra from palabras where palabra = '" + palabra + "';";
+    QString consulta = "select id_palabra_izq from palabra_izq where palabra = '" + palabra + "';";//para la forma1
+    QSqlQuery query(db);
+    query.prepare(consulta);
+    query.exec();
+    query.first();
+    QSqlRecord rec = query.record();
+    return rec.field(0).value().toString();
+}
+//esta funcion quiza no la use, ya que no debo recuperar por vectores si no todo s la avez y hacer el calculo, por ahora probae asi
+vector<pair<long long int, long long int> > Buscador::recuperarVectorByPalabra(QString palabra){//por haor recibe un id en forma de string o quiza pueda buscar el id si este strign ses unna palabra
+    QSqlQuery query(db);
+    QString id = recuperarIdByPalabra(palabra);
+    //qDebug() << "id: " << id;
+    //QString consulta = "select id_palabra_der, frecuencia from relacion_palabra where id_palabra_izq=" + id + " order by id_palabra_der;";//no necesito retornar id_palabra_izq
+    QString consulta = "select id_palabra_der, frecuencia from relacion_izq_der where id_palabra_izq=" + id + " order by id_palabra_der;";//forma1,no necesito retornar id_palabra_izq
     query.prepare(consulta);
     query.exec();
     query.first();
     vector<pair<long long int, long long int> > v (query.size());
-    qDebug() << "v size: " << v.size();
+    QSqlRecord rec;
+    //qDebug() << "v size: " << v.size();
     for(int i = 0; i < v.size(); ++i){
         rec = query.record();
         v[i].first = rec.field(0).value().toLongLong();
@@ -42,13 +63,77 @@ vector<pair<long long int, long long int> > Buscador::recuperarVector(QString pa
     }
     return v;
 }
+vector<pair<long long int, long long int> > Buscador::recuperarVectorById(long long int indice){//por haor recibe un id en forma de string o quiza pueda buscar el id si este strign ses unna palabra
+    QSqlQuery query(db);
+    QString id = QString::number(indice);
+    //qDebug() << "id: " << id;
+    //QString consulta = "select id_palabra_der, frecuencia from relacion_palabra where id_palabra_izq=" + id + " order by id_palabra_der;";//no necesito retornar id_palabra_izq
+    QString consulta = "select id_palabra_der, frecuencia from relacion_izq_der where id_palabra_izq=" + id + " order by id_palabra_der;";//forma1,no necesito retornar id_palabra_izq
+    query.prepare(consulta);
+    query.exec();
+    query.first();
+    vector<pair<long long int, long long int> > v (query.size());
+    QSqlRecord rec;
+    //qDebug() << "v size: " << v.size();
+    for(int i = 0; i < v.size(); ++i){
+        rec = query.record();
+        v[i].first = rec.field(0).value().toLongLong();
+        v[i].second = rec.field(1).value().toLongLong();
+        query.next();
+    }
+    return v;
+}
+void Buscador::process2(QString palabra){
+    QSqlQuery query2 (db);
+    QString consulta2 = "select * from palabra_izq order by id_palabra_izq;";//quiza solod deba retornal palabra
+    query2.prepare(consulta2);
+    query2.exec();
+    query2.first();
+    QSqlRecord rec2;// = query2.record();
+    QSqlQuery query (db);
+    QString consulta = "select * from relacion_izq_der order by id_palabra_izq, id_palabra_der;";
+    query.prepare(consulta);
+    query.exec();
+    bool info = query.first();
+    QSqlRecord rec = query.record();
+    qDebug() << "recuperacion grande completa " << info;
+    vector<pair<long long int, long long int> > vPalabra = recuperarVectorByPalabra(palabra);
+    vector<Palabra> palabras (88342);//93243 palabras en total me quedaron, tener cuidado con esto si hago modificaciones, los id de la base de datos son el id del vector +1
+    //deberia trabajar con alotra tabla por que no todas la palabras tendra, vector seria estupido buscarlo, //88342
+    for(long int i = 0; i < palabras.size(); i++){
+        vector<pair<long long int, long long int> > vec;//podria trbaajar recuperando la informacion de la forma1 en lugar de la forma2
+        while(info && rec.field(0).value().toLongLong()==i+1){
+            pair<long long int, long long int> par;
+            par.first = rec.field(1).value().toLongLong();
+            par.second = rec.field(2).value().toLongLong();
+            vec.push_back(par);
+            //vec.push_back(make_pair<long long int, long long int> (rec.field(1).value().toLongLong(), rec.field(2).value().toLongLong()));
+            info = query.next();
+            rec = query.record();
+        }
+        //qDebug() << i+1 << "vec.size(): " << vec.size();
+        palabras[i].indice = i+1;
+        rec2 = query2.record();
+        palabras[i].palabra = rec2.field(1).value().toString();
+        //palabras[i].palabra = recuperarPalabraById(i+1);//no necesito hacer esto, como estoy usado las palabras de la tabal plabra 1 y alli ya estan ordenads solo debo recuperar eso y accedor con igualda a la posicion i
+        //qDebug() << palabras[i].palabra;
+        palabras[i].similaridad = simcos(vPalabra, vec);//parece que funcion mas rapido con simcos2, pero los resultados no son los mismos, investigar
+        query2.next();
+    }
+    model = new ResultModel(this);
+    model->setPalabras(palabras);
+    ui->tableViewResults->setModel(model);
+    ui->tableViewResults->resizeColumnsToContents();
+    qDebug() << "Fin";
+}
+
 void Buscador::process(QString palabra)
 {//quiza en lugar de retornar los ids y lafrecuencia tambien deberia retornar la palabra de la izquierda, para asociarla de una sola vez a  su repsectivo id, en lugar de hacer despues
     //quiza tambien deberia usar mi propia estructura para almacenar todos los datos pertinentes y amnejarlo en el modelo a base de if como hago ahora, solo que ya todo estaria en unn solo vector
-    vector<QString> palabras (10);//ya no debo repuperar nada mas que sus vectores
+    //cuando haga el proceso de frente, lo que debo un vector<Palabra> con al cantidad exacta de palabras1 algo de 82000 mientras voy procesando, voy llenado datos de la primera, y asi sucesivamente, luego recien buscar a quien le pertenece esos datos,
+    /*vector<QString> palabras (10);//ya no debo repuperar nada mas que sus vectores
     palabras[0] = "god";
     palabras[1] = "allah";
-    //palabras[1] = "yahweh";
     palabras[2] = "buddha";
     palabras[3] = "lion";
     palabras[4] = "tiger";
@@ -56,26 +141,55 @@ void Buscador::process(QString palabra)
     palabras[6] = "hamburger";
     palabras[7] = "pizza";
     palabras[8] = "pen";
-    palabras[9] = "notebook";
+    palabras[9] = "notebook";*/
+    //recuperar la palabra que busco y procesarla contra todas las palabras
+    vector<pair<long long int, long long int> > vPalabra = recuperarVectorByPalabra(palabra);
+    vector<Palabra> pa (88342);//93243 palabras en total me quedaron, tener cuidado con esto si hago modificaciones, los id de la base de datos son el id del vector +1
+    //deberia trabajar con alotra tabla por que no todas la palabras tendra, vector seria estupido buscarlo, //88342
+    for(long int i = 0; i < pa.size(); i++){
+        vector<pair<long long int, long long int> > vec = recuperarVectorById(i+1);//podria trbaajar recuperando la informacion de la forma1 en lugar de la forma2
+        //ids[i] = i;
+        qDebug() << i+1;
+        pa[i].indice = i+1;
+        pa[i].palabra = recuperarPalabraById(i+1);
+        //qDebug() << pa[i].palabra;
+        pa[i].similaridad = simcos2(vPalabra, vec);
+    }
+
+    /*vector<Palabra> p (10);//93243 palabras en total me quedaron
+    p[0].palabra = "god";
+    p[1].palabra = "allah";
+    //palabras[1] = "yahweh";
+    p[2].palabra = "buddha";
+    p[3].palabra = "lion";
+    p[4].palabra = "tiger";
+    p[5].palabra = "cat";
+    p[6].palabra = "hamburger";
+    p[7].palabra = "pizza";
+    p[8].palabra = "pen";
+    p[9].palabra = "notebook";
     int pal = 0;
-    for(; pal < palabras.size() && palabras[pal] != palabra; pal = -~pal){
+    for(; pal < p.size() && p[pal].palabra != palabra; pal = -~pal){
     }
     vector<vector<pair<long long int, long long int> > > vectores (10);
-    vector<double> similaridad (10);
-    vector<long int> ids (10);
-    for(int i = 0; i < palabras.size(); i++){
-        vectores[i] = recuperarVector(palabras[i]);
-        ids[i] = i;
+    //vector<double> similaridad (10);
+    //vector<long int> ids (10);
+    for(int i = 0; i < p.size(); i++){
+        vectores[i] = recuperarVectorByPalabra(p[i].palabra);
+        //ids[i] = i;
+        p[i].indice = i;
     }
-    qDebug() << "recuperacion de vectores completada";
-    for(int i = 0; i < palabras.size(); i++){
-        similaridad[i] = simcos2(vectores[pal], vectores[i]);
-        qDebug() << similaridad[i];
-    }
+    //qDebug() << "recuperacion de vectores completada";
+    for(int i = 0; i < p.size(); i++){
+        //similaridad[i] = simcos2(vectores[pal], vectores[i]);
+        p[i].similaridad = simcos2(vectores[pal], vectores[i]);
+        //qDebug() << similaridad[i];
+    }*/
     model = new ResultModel(this);
-    model->setWords(palabras);
-    model->setIds(ids);
-    model->setSimilaridad(similaridad);
+    //model->setWords(palabras);
+    model->setPalabras(pa);
+    //model->setIds(ids);
+    //model->setSimilaridad(similaridad);
     ui->tableViewResults->setModel(model);
     ui->tableViewResults->resizeColumnsToContents();
 }
@@ -97,7 +211,7 @@ Buscador::~Buscador()
 void Buscador::on_pushButtonSearch_clicked()
 {
     QString word = ui->lineEditWord->text();
-    process(word);//debo asegurarme que la palabra exista antes de mandar a procesar todo o fallara esta cosa
+    process2(word);//debo asegurarme que la palabra exista antes de mandar a procesar todo o fallara esta cosa
 }
 
 void Buscador::on_pushButton_clicked()

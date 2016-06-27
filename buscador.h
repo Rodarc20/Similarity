@@ -7,8 +7,10 @@
 #include <QMessageBox>
 #include <utility>
 #include <algorithm>
+#include<QLocale>
 #include "operaciones.h"
 #include "resultmodel.h"
+#include "palabra.h"
 
 namespace Ui {
 class Buscador;
@@ -27,7 +29,11 @@ class Buscador : public QMainWindow
         explicit Buscador(QWidget *parent = 0);
         ~Buscador();
 
-        vector<pair<long long, long long> > recuperarVector(QString palabra);
+        QString recuperarPalabraById(long long int indice);
+        QString recuperarIdByPalabra(QString palabra);
+        vector<pair<long long, long long> > recuperarVectorByPalabra(QString palabra);
+        vector<pair<long long, long long> > recuperarVectorById(long long indice);
+        void process2(QString palabra);
     private slots:
         void on_pushButton_clicked();
 

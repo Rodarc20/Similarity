@@ -81,3 +81,15 @@ double simcos2(vector<pair<long long int, long long int> > & a, vector<pair<long
     res = (double)acumPP / (sqrt(acumMA)*sqrt(acumMB));
     return res;
 }
+
+bool mayorSimilaridad(Palabra a, Palabra b){
+    if(a.similaridad > b.similaridad){
+        return 1;
+    }
+    else{
+        if(a.indice == b.indice){//si son iguales, los oredenare por orden alfabetico, es decir el mayor sera el que tenga el indice mas alto
+            return a.indice > b.indice;//quiza solo deba poner este return, y quitar el return 0,
+        }
+        return 0;
+    }
+}
