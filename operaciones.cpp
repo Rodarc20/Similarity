@@ -85,6 +85,30 @@ double simcos2(vector<pair<long long int, long long int> > & a, vector<pair<long
     double res = (double)acumPP / (sqrt(acumMA)*sqrt(acumMB));
     return res;
 }
+double simcos2d(vector<pair<long long int, double> > & a, vector<pair<long long int, double> > & b){
+    double acumPP = 0;
+    double acumMA = 0;
+    double acumMB = 0;
+    long int j = 0; //j debe ser menor que b
+    for(long int i = 0; i < a.size() /*&& j < b.size()*/; i = -~i){//asumire que a es el mas grande
+        while(j < b.size() && b[j].first < a[i].first){//no diferente sino que sea menor
+            acumMB += b[j].second * b[j].second;
+            j = -~j;
+        }
+        if(j < b.size() && a[i].first == b[j].first){//si j es menor que size eso quiere decir que el bucle anterior paro por que encontro una igualdad por lo tanto procedo a acumular
+            acumPP += a[i].second * b[j].second;
+            acumMB += b[j].second * b[j].second;
+            j = -~j; //incremento j, puesto que ya use este valor por lo tanto no es necesario incluirlo en la busqueda binaria, tener cuidao si la busqueda bianri me da mas que b.size()
+        }
+        acumMA += a[i].second * a[i].second;
+    }
+    //si a termina primero, hay jotas por recorrer
+    while(j < b.size()){//no diferente sino que sea menor
+        acumMB += b[j].second * b[j].second;
+        j = -~j;
+    }
+    return acumPP / (sqrt(acumMA)*sqrt(acumMB));
+}
 
 bool mayorSimilaridad(Palabra a, Palabra b){
     if(a.similaridad > b.similaridad){
