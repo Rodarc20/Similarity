@@ -57,20 +57,20 @@
      </rect>
     </property>
     <property name="text">
-     <string>Search</string>
+     <string>Search W</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>490</y>
+      <x>560</x>
+      <y>55</y>
       <width>93</width>
       <height>27</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Search F</string>
     </property>
    </widget>
   </widget>

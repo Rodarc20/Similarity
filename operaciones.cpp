@@ -107,6 +107,7 @@ double simcos2d(vector<pair<long long int, double> > & a, vector<pair<long long 
         acumMB += b[j].second * b[j].second;
         j = -~j;
     }
+    //cout << acumPP << " " << acumMA << " " << acumMB << endl;
     return acumPP / (sqrt(acumMA)*sqrt(acumMB));
 }
 

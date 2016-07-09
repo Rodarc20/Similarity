@@ -38,6 +38,9 @@ class Buscador : public QMainWindow
         void process10(QString palabra);
         void process102(QString palabra);
         vector<pair<long long, double> > recuperarVectorByPalabra2(QString palabra);
+        void process22(QString palabra);
+        void process_2(QString palabra);
+        vector<pair<long long, double> > recuperarVectorById2(long long indice);
     private slots:
         void on_pushButton_clicked();
 
